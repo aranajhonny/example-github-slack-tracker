@@ -3,7 +3,7 @@
 // `state` is an object that persists across program updates. Store data here.
 import { nodes, root, state } from "membrane";
 
-export async function configure({ args: { slackUrl, repo } }) {
+export async function configure({ slackUrl, repo }) {
   const [user, repository] = repo.split("/");
   if (!slackUrl) {
     throw new Error("Slack webhook url is required");
@@ -17,12 +17,13 @@ export async function configure({ args: { slackUrl, repo } }) {
   state.repository = repository;
   state.user = user;
 
-  await nodes.github.users.one({ name: user })
+  await nodes.github.users
+    .one({ name: user })
     .repos.one({ name: repository })
     .pushes.$subscribe(root.handleCommit);
 }
 
-export async function handleCommit({ event }) {
+export async function handleCommit(_, { event }) {
   const res = await event.commit.$query(
     `{ message, html_url, author { login } }`
   );
