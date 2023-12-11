@@ -3,6 +3,7 @@
     "types": [
       {
         "name": "Root",
+        "description": "Send a Slack message when a commit is pushed to Github.",
         "actions": [
           {
             "name": "configure",
